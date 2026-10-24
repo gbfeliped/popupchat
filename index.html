@@ -93,6 +93,15 @@
     padding: 8px 16px;
     border-bottom: 1px solid #4a3408;
   }
+  #loginHint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #171034;
+    border-bottom: 1px solid #3c2a70;
+    color: #c9b6ff;
+  }
+  #loginHint[hidden] { display: none; }
 
   main#grid {
     flex: 1;
@@ -212,6 +221,14 @@
   <code>http://localhost:8000</code>.
 </div>
 
+<div class="notice" id="loginHint" hidden>
+  <span>
+    Para conversar: clique em <strong>Entrar</strong> em qualquer um dos chats e faça login na Twitch
+    <strong>uma única vez</strong> — vale para todos os chats desta página e fica lembrado neste site.
+  </span>
+  <button id="loginHintClose" type="button" title="fechar aviso" style="margin-left:auto;background:none;border:0;color:inherit;font-size:14px;cursor:pointer">✕</button>
+</div>
+
 <main id="grid"></main>
 
 <div id="empty">
@@ -238,6 +255,16 @@
   if (location.protocol === 'file:') {
     document.getElementById('fileNotice').hidden = false;
   }
+
+  // Aviso sobre o login da Twitch (lembrado por domínio): mostra até ser dispensado.
+  const loginHint = document.getElementById('loginHint');
+  try {
+    if (!localStorage.getItem('loginHintFechado')) loginHint.hidden = false;
+  } catch (e) { loginHint.hidden = false; }
+  document.getElementById('loginHintClose').addEventListener('click', () => {
+    loginHint.hidden = true;
+    try { localStorage.setItem('loginHintFechado', '1'); } catch (e) {}
+  });
 
   function getChannels() {
     const params = new URLSearchParams(location.search);
